@@ -11,7 +11,6 @@ la variable sera nommée "tag"
 #Dupleix ::
 Si toutes les tâches sont marqué terminées alors l'activité est marqué comme terminé
 Ajouté dans le menu la possibilité de marqué une tâche comme importante et pouvoir l'enlevé
-Ajouté dans le menu la possibilité de marqué une activité comme terminé
 -----------------------------------------------------------------------------------------
 #Charles ::
 commentaires

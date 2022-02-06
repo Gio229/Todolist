@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'src/ToDo.dart';
+import 'src/Todo.dart';
 import 'src/Task.dart';
 
 void main() {
-  List<ToDo> dataBase = [];
+  List<Todo> dataBase = [];
 
   print("\n[To do List]\n");
   printAllActivity(dataBase);
@@ -13,10 +13,10 @@ void main() {
 
 void printMenu() {
   print(
-      "\n----------****Menu****----------\n1- Ajouter une nouvelle activité\n2- Ajouter une nouvelle tâche à une activité\n3- Voir les activités ajoutées\n4- Voir les tâches d'une activité\n5- Modifier la durée passée sur une tâche\n6- Supprimer une tâche\n7- Supprimer une activité\n8- Quitter\n----------************----------");
+      "\n----------****Menu****----------\n1- Ajouter une nouvelle activité\n2- Ajouter une nouvelle tâche à une activité\n3- Voir les activités ajoutées\n4- Voir les tâches d'une activité\n5- Modifier la durée passée sur une tâche\n6- Supprimer une tâche\n7- Supprimer une activité\n8- Ajouter/Retirer le tag d'importance d'une activité\n9- Quitter\n----------************----------");
 }
 
-void start(List<ToDo> dataBase, int choice) {
+void start(List<Todo> dataBase, int choice) {
   switch (choice) {
     case 1:
       print("[Ajouter une activité]\n");
@@ -64,6 +64,12 @@ void start(List<ToDo> dataBase, int choice) {
       start(dataBase, choose());
       break;
     case 8:
+      print("[Ajouter/Retirer le tag d'importance d'une activité]");
+      TagOrUnTagActivity(dataBase);
+      printMenu();
+      start(dataBase, choose());
+      break;
+    case 9:
       print("A la prochaine...");
       break;
     default:
@@ -86,17 +92,21 @@ int choose() {
   return 0;
 }
 
-bool createActivity(List<ToDo> dataBase) {
+bool createActivity(List<Todo> dataBase) {
   String? name;
   print("Nom de l'activité : ");
-  name = stdin.readLineSync().toString();
+  name = stdin.readLineSync().toString().toLowerCase();
 
   if (name.isEmpty) {
     createActivity(dataBase);
   } else {
     if (continuer("Etes vous sur de vouloir créer l'activité : <$name> ?")) {
-      dataBase.add(new ToDo(name));
-      print("continuer est à true");
+      if(continuer("Marquer l'activité comme importante ?")){
+        dataBase.add(new Todo(name.toUpperCase(), "important"));
+      }else{
+        dataBase.add(new Todo(name));
+      }
+
       return true;
     }
   }
@@ -119,7 +129,7 @@ bool continuer(String message) {
   return c;
 }
 
-bool addingTask(List<ToDo> dataBase) {
+bool addingTask(List<Todo> dataBase) {
   if (dataBase.isEmpty) {
     print(
         "Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
@@ -129,7 +139,7 @@ bool addingTask(List<ToDo> dataBase) {
     print("Entrez le numéro de l'activité");
     int choice = choose();
     if (choice > 0 && choice <= dataBase.length) {
-      ToDo? activity = findActivity(dataBase, choice);
+      Todo? activity = findActivity(dataBase, choice);
       if (activity != null) {
         print("Ajouter une tâche à : <" + activity.name + ">\n-->");
         print('Nom de la tâche : ');
@@ -155,7 +165,7 @@ bool addingTask(List<ToDo> dataBase) {
   return false;
 }
 
-void printLastActivity(List<ToDo> dataBase) {
+void printLastActivity(List<Todo> dataBase) {
   if (dataBase.isNotEmpty) {
     print("\n" +
         dataBase.length.toString() +
@@ -164,7 +174,7 @@ void printLastActivity(List<ToDo> dataBase) {
   }
 }
 
-void printAllActivity(List<ToDo> dataBase) {
+void printAllActivity(List<Todo> dataBase) {
   int num;
   if (dataBase.isEmpty) {
     print("Aucune activité ajoutée\n");
@@ -176,7 +186,7 @@ void printAllActivity(List<ToDo> dataBase) {
   }
 }
 
-void printTasksActivity(List<ToDo> dataBase) {
+void printTasksActivity(List<Todo> dataBase) {
   if (dataBase.isEmpty) {
     print(
         "Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
@@ -186,7 +196,7 @@ void printTasksActivity(List<ToDo> dataBase) {
     print("Entrez le numéro de l'activité");
     int choice = choose();
     if (choice > 0 && choice <= dataBase.length) {
-      ToDo? activity = findActivity(dataBase, choice);
+      Todo? activity = findActivity(dataBase, choice);
       if (activity != null) {
         activity.printAllTask();
       } else {
@@ -196,7 +206,7 @@ void printTasksActivity(List<ToDo> dataBase) {
   }
 }
 
-ToDo? findActivity(List<ToDo> dataBase, int num) {
+Todo? findActivity(List<Todo> dataBase, int num) {
   for (int i = 0; i < dataBase.length; i++) {
     if (i == (num - 1)) {
       return dataBase[i];
@@ -205,7 +215,7 @@ ToDo? findActivity(List<ToDo> dataBase, int num) {
   return null;
 }
 
-bool removeTaskActivity(List<ToDo> dataBase) {
+bool removeTaskActivity(List<Todo> dataBase) {
   if (dataBase.isEmpty) {
     print(
         "Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
@@ -215,7 +225,7 @@ bool removeTaskActivity(List<ToDo> dataBase) {
     print("Entrez le numéro de l'activité");
     int choice = choose();
     if (choice > 0 && choice <= dataBase.length) {
-      ToDo? activity = findActivity(dataBase, choice);
+      Todo? activity = findActivity(dataBase, choice);
       if (activity != null) {
         print("Activité : <" + activity.name + '>');
         print("\nTâches disponibles\n");
@@ -246,7 +256,7 @@ bool removeTaskActivity(List<ToDo> dataBase) {
   return false;
 }
 
-bool modifyTaskTimeSpent(List<ToDo> dataBase) {
+bool modifyTaskTimeSpent(List<Todo> dataBase) {
   if (dataBase.isEmpty) {
     print(
         "Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
@@ -256,7 +266,7 @@ bool modifyTaskTimeSpent(List<ToDo> dataBase) {
     print("Entrez le numéro de l'activité");
     int choice = choose();
     if (choice > 0 && choice <= dataBase.length) {
-      ToDo? activity = findActivity(dataBase, choice);
+      Todo? activity = findActivity(dataBase, choice);
       if (activity != null) {
         print("Activité : <" + activity.name + '>');
         print("\nTâches disponibles\n");
@@ -290,7 +300,7 @@ bool modifyTaskTimeSpent(List<ToDo> dataBase) {
   return false;
 }
 
-bool removeActivity(List<ToDo> dataBase) {
+bool removeActivity(List<Todo> dataBase) {
   if (dataBase.isEmpty) {
     print(
         "Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
@@ -300,7 +310,7 @@ bool removeActivity(List<ToDo> dataBase) {
     print("Entrez le numéro de l'activité");
     int choice = choose();
     if (choice > 0 && choice <= dataBase.length) {
-      ToDo? activity = findActivity(dataBase, choice);
+      Todo? activity = findActivity(dataBase, choice);
       if (activity != null) {
         // print("Voulez-vous vraiment supprimer l'activité : <" + activity.name + '>');
         if (continuer("Voulez-vous vraiment supprimer l'activité : <" +
@@ -314,4 +324,38 @@ bool removeActivity(List<ToDo> dataBase) {
     }
   }
   return false;
+}
+
+void TagOrUnTagActivity(List<Todo> dataBase){
+
+  if (dataBase.isEmpty) {
+    print("Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
+  } else {
+    print("\nActivités disponibles\n");
+    printAllActivity(dataBase);
+    print("Entrez le numéro de l'activité");
+    int choice = choose();
+    if (choice > 0 && choice <= dataBase.length) {
+      Todo? activity = findActivity(dataBase, choice);
+      if (activity != null) {
+        if(activity.tag == null){
+          if(continuer("Voulez-vous marquer cette activité comme importante")){
+            activity.tag = "important";
+            activity.name = activity.name.toUpperCase();
+            print("Activité marquer comme importante.");
+          }
+        }else{
+          if(continuer("Voulez-vous retirer la marque importante de cette activité")){
+            activity.tag = null;
+            activity.name = activity.name.toLowerCase();
+            print("Marque retiré.");
+          }
+        }
+      } else {
+        print("Aucune activité ne porte ce numéro");
+      }
+      
+    }
+  }
+
 }
