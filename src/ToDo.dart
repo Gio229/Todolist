@@ -1,11 +1,16 @@
 import 'Task.dart';
 
-class ToDo{
+class Todo{
 
   String name;
+  String? tag;
+  String status = "";
   List <Task> tasks = [];
 
-    ToDo(this.name);
+
+    Todo(this.name, [String? tag]){
+      this.tag = tag;
+    }
 
     void addTask(Task task){
         tasks.add(task);
@@ -42,5 +47,6 @@ class ToDo{
       }
       return null;
     }
-    
+
+     
 }
