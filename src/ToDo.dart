@@ -5,10 +5,11 @@ class Todo{
   String name;
   String? tag;
   String status = "";
+  bool terminate;
   List <Task> tasks = [];
 
 
-    Todo(this.name, [String? tag]){
+    Todo(this.name, [String? tag, this.terminate=false]){
       this.tag = tag;
     }
 

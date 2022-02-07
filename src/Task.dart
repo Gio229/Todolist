@@ -1,5 +1,6 @@
 class Task {
   String name;
+  String? tag;
   String timeInit;
   String timeSpent = '00min';
   Map<String, String> possibleStatus = {
