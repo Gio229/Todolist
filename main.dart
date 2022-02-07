@@ -13,7 +13,7 @@ void main() {
 
 void printMenu() {
   print(
-      "\n----------****Menu****----------\n1- Ajouter une nouvelle activité\n2- Ajouter une nouvelle tâche à une activité\n3- Voir les activités ajoutées\n4- Voir les tâches d'une activité\n5- Modifier la durée passée sur une tâche\n6- Supprimer une tâche\n7- Supprimer une activité\n8- Ajouter/Retirer le tag d'importance d'une activité\n9- Quitter\n----------************----------");
+      "\n----------****Menu****----------\n1- Ajouter une nouvelle activité\n2- Ajouter une nouvelle tâche à une activité\n3- Voir les activités ajoutées\n4- Voir les tâches d'une activité\n5- Modifier la durée passée sur une tâche\n6- Supprimer une tâche\n7- Supprimer une activité\n8- Ajouter/Retirer le tag d'importance d'une activité\n9- Ajouter/Retirer le tag d'importance d'une tâche\n10- Marqué une tâche comme terminé ou non\n11- Quitter\n----------************----------");
 }
 
 void start(List<Todo> dataBase, int choice) {
@@ -34,7 +34,6 @@ void start(List<Todo> dataBase, int choice) {
       start(dataBase, choose());
       break;
     case 3:
-      print("ok");
       printAllActivity(dataBase);
       printMenu();
       start(dataBase, choose());
@@ -70,6 +69,18 @@ void start(List<Todo> dataBase, int choice) {
       start(dataBase, choose());
       break;
     case 9:
+      print("[Ajouter/Retirer le tag d'importance d'une tâche]");
+      TagOrUnTagTaskActivity(dataBase);
+      printMenu();
+      start(dataBase, choose());
+      break;
+    case 10:
+      print("[Marqué une tâche comme terminé ou non]");
+      markTaskTerminate(dataBase);
+      printMenu();
+      start(dataBase, choose());
+      break;
+    case 11:
       print("A la prochaine...");
       break;
     default:
@@ -155,6 +166,7 @@ bool addingTask(List<Todo> dataBase) {
                   activity.name +
                   "> ?")) {
             activity.addTask(new Task(taskName, taskTime));
+            verifyActivityTerminate(dataBase);
             activity.printLastTask();
             return true;
           }
@@ -179,9 +191,13 @@ void printAllActivity(List<Todo> dataBase) {
   if (dataBase.isEmpty) {
     print("Aucune activité ajoutée\n");
   } else {
+    print("N° | Nom de l'activité   ");
+    print("***|*******************************");
     for (int i = 0; i < dataBase.length; i++) {
       num = i + 1;
-      print('$num- <${dataBase[i].name}>\n');
+      
+      print('$num- |<${dataBase[i].name}> ---> ${(dataBase[i].terminate == true) ?"Terminé" : "Non terminé"}');
+      print("***|*******************************|");
     }
   }
 }
@@ -358,4 +374,117 @@ void TagOrUnTagActivity(List<Todo> dataBase){
     }
   }
 
+}
+
+void markTaskTerminate(List<Todo> dataBase) {
+
+  if (dataBase.isEmpty) {
+    print(
+        "Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
+  } else {
+    print("\nActivités disponibles\n");
+    printAllActivity(dataBase);
+    print("Entrez le numéro de l'activité");
+    int choice = choose();
+    if (choice > 0 && choice <= dataBase.length) {
+      Todo? activity = findActivity(dataBase, choice);
+      if (activity != null) {
+        print("Activité : <" + activity.name + '>');
+        print("\nTâches disponibles\n");
+        activity.printAllTask();
+        if (activity.tasks.isNotEmpty) {
+          if (continuer("Etes vous sur de vouloir continuer ?")) {
+            print("Entrez le numéro de la tâche");
+            int choice = choose();
+            if (choice > 0 && choice <= activity.tasks.length) {
+              Task? task = activity.findTask(choice);
+              if (task != null) {
+
+                if(task.status != task.possibleStatus['end'].toString()){
+                  if(continuer("Voulez-vous marquer cette tâche comme terminé")){
+                    task.status = task.possibleStatus['end'].toString();
+                    verifyActivityTerminate(dataBase);
+                    print("Tâche marquer comme terminé.");
+                  }
+                }else{
+                  if(continuer("Voulez-vous marquer cette tâche comme non terminé")){
+                    task.status = task.possibleStatus['in'].toString();
+                    verifyActivityTerminate(dataBase);
+                    print("Tâche marqué \"en cours\".");
+                  }
+                }
+
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
+
+void verifyActivityTerminate(List<Todo> dataBase) {
+  bool term = true;
+  for (int i = 0; i < dataBase.length; i++) {
+    if (dataBase[i].tasks.isNotEmpty) {
+      for (int j = 0; j < dataBase[i].tasks.length; j++) {
+        if (dataBase[i].tasks[j].status != dataBase[i].tasks[j].possibleStatus['end'].toString()) {
+          term = false;
+        }
+      }
+      if (term) {
+        dataBase[i].terminate = true;
+      } else {
+        dataBase[i].terminate = false;
+      }
+    }
+  }
+}
+
+void TagOrUnTagTaskActivity(List<Todo> dataBase){
+  if (dataBase.isEmpty) {
+    print(
+        "Aucune activité n'existe donc vous ne pouvez effectuer cette requête.");
+  } else {
+    print("\nActivités disponibles\n");
+    printAllActivity(dataBase);
+    print("Entrez le numéro de l'activité");
+    int choice = choose();
+    if (choice > 0 && choice <= dataBase.length) {
+      Todo? activity = findActivity(dataBase, choice);
+      if (activity != null) {
+        print("Activité : <" + activity.name + '>');
+        print("\nTâches disponibles\n");
+        activity.printAllTask();
+        if (activity.tasks.isNotEmpty) {
+          if (continuer("Etes vous sur de vouloir continuer ?")) {
+            print("Entrez le numéro de la tâche");
+            int choice = choose();
+            if (choice > 0 && choice <= activity.tasks.length) {
+              Task? task = activity.findTask(choice);
+              if (task != null) {
+
+
+                if(task.tag == null){
+                  if(continuer("Voulez-vous marquer cette tâche comme importante")){
+                    task.tag = "important";
+                    task.name = task.name.toUpperCase();
+                    print("Tâche marqué comme importante.");
+                  }
+                }else{
+                  if(continuer("Voulez-vous retirer la marque importante de cette tâche")){
+                    task.tag = null;
+                    task.name = task.name.toLowerCase();
+                    print("Marque retiré.");
+                  }
+                }
+
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
