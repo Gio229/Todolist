@@ -10,10 +10,12 @@ class Task {
   };
   String status = '';
 
+//Constructeur
   Task(this.name, this.timeInit) {
     this.status = possibleStatus['start'].toString();
   }
 
+//Methode afficharge de la tâche
   String printTask() {
     return this.name +
         " |Durée : " +
@@ -24,6 +26,7 @@ class Task {
         this.status;
   }
 
+//Modifier la durée d'une tâche
   bool modifyTimeSpent(String newTime) {
     if (newTime != "") {
       this.timeSpent = newTime;

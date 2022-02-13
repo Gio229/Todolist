@@ -8,16 +8,17 @@ class Todo{
   bool terminate;
   List <Task> tasks = [];
 
-
+//Constructeur
     Todo(this.name, [String? tag, this.terminate=false]){
       this.tag = tag;
     }
 
+//Ajouter une tâche
     void addTask(Task task){
         tasks.add(task);
       }
 
-
+//Afficher les tâches
     void printAllTask(){
       int num;
       if(this.tasks.isEmpty){
@@ -30,16 +31,19 @@ class Todo{
       }
     }
 
+//Afficher la dernière tâche
     void printLastTask(){
       if(this.tasks.isNotEmpty){
         print( tasks.length.toString() + "- " + tasks[tasks.length - 1].printTask());
       }
     }
     
+    //Supprimer tâche 
     void removeTask(Task t){
       this.tasks.remove(t);
     }
 
+//rechercher tâche
     Task? findTask(int num){
       for(int i = 0; i < tasks.length; i++){
         if(i == (num - 1)){
@@ -47,7 +51,5 @@ class Todo{
         }
       }
       return null;
-    }
-
-     
+    }    
 }
